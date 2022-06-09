@@ -100,6 +100,9 @@ axios
     access_token_updatedata = error;
   });
 
+app.get("/",(req,res)=>{
+  res.send("Investment Portal");
+})
 
 //Get Record - Detail View
 app.get("/getrecord",(req,res)=>{
