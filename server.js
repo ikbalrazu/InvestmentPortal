@@ -85,20 +85,20 @@ var transporter = nodemailer.createTransport({
 
 
 //get access token for create Record
-let access_token_updatedata;
-axios
-  .post(
-    `https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_updatedata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`
-  )
-  .then(function (response) {
-    access_token_updatedata = response.data.access_token;
-  })
-  .then(function(data){
-      console.log("access token created for update Record: ",access_token_updatedata);
-  })
-  .catch(function (error) {
-    access_token_updatedata = error;
-  });
+// let access_token_updatedata;
+// axios
+//   .post(
+//     `https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_updatedata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`
+//   )
+//   .then(function (response) {
+//     access_token_updatedata = response.data.access_token;
+//   })
+//   .then(function(data){
+//       console.log("access token created for update Record: ",access_token_updatedata);
+//   })
+//   .catch(function (error) {
+//     access_token_updatedata = error;
+//   });
 
 app.get("/",(req,res)=>{
   res.send("Investment Portal");
@@ -227,12 +227,12 @@ app.post("/updaterecord",(req,res)=>{
 })
 
 app.post("/sendemail",(req,res)=>{
-  const {email} = req.body;
+  const {email,id} = req.body;
   var mailOptions = {
     from:' "Reset Your Password" <iqbalraju451@gmail.com>',
     to: email,
     subject: 'Reset Password Link - Investment Portal',
-    html:`<h2>Your email: ${email}! </h2><p>You requested for reset password, kindly use this <a href="http://localhost:4000/reset-password?token=' + token + '">link</a> to reset your password</p>`
+    html:`<h2>Your email: ${email}! </h2><p>You requested for reset password, kindly use this <a href="http://localhost:3000/confirmforgotpassword">Open Link</a> to reset your password</p>`
   }
 
   transporter.sendMail(mailOptions, function(error, info){
@@ -247,6 +247,10 @@ app.post("/sendemail",(req,res)=>{
         
       }
   });
+})
+
+app.put("/updatepassword",(req,res)=>{
+  
 })
 
 app.put("/reset-password",(req,res)=>{
