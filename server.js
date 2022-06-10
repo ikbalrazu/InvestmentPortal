@@ -232,7 +232,7 @@ app.post("/sendemail",(req,res)=>{
     from:' "Reset Your Password" <iqbalraju451@gmail.com>',
     to: email,
     subject: 'Reset Password Link - Investment Portal',
-    html:`<h2>Your email: ${email}! </h2><p>You requested for reset password, kindly use this <a href="http://localhost:3000/confirmforgotpassword">Open Link</a> to reset your password</p>`
+    html:`<h2>Your email: ${email}! </h2><p>You requested for reset password, kindly use this <a href="https://investmentportal.netlify.app/confirmforgotpassword">Open Link</a> to reset your password</p>`
   }
 
   transporter.sendMail(mailOptions, function(error, info){
@@ -250,7 +250,7 @@ app.post("/sendemail",(req,res)=>{
 })
 
 app.put("/updatepassword",(req,res)=>{
-  
+
 })
 
 app.put("/reset-password",(req,res)=>{
