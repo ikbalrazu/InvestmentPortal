@@ -4,11 +4,14 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
+const multer = require('multer');
+const fileupload = require("express-fileupload");
 
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors());
+// app.use(fileupload());
 app.use(bodyParser.json());
 
 
@@ -22,6 +25,59 @@ var transporter = nodemailer.createTransport({
       pass:"pvrwwlqbhletegfv"
   }
 })
+
+
+//image path
+//limit: 5mb or 1mb
+//filter: png, jpeg, jpg
+
+// const storage = multer.diskStorage({
+//   dest: UPLOADS_FOLDER
+// })
+
+//file upload folder
+const UPLOADS_FOLDER = "./uploads/";
+
+//define the storage
+const storage = multer.diskStorage({
+  destination: (req,file,cb)=>{
+    cb(null, "./uploads");
+  },
+  filename: (req,file,cb) => {
+    cb(null, Date.now() + '--' + file.originalname)
+  },
+});
+
+const upload = multer({
+  storage: storage
+})
+
+//preapre the final multer upload object
+// const upload = multer({
+//   dest: UPLOADS_FOLDER,
+//   limits: {
+//     fileSize: 1000000, //1mb
+//   },
+//   fileFilter: (req,file,cb) => {
+//     console.log(file);
+//   },
+// });
+
+//single file
+// app.post("/multerupload",upload.single("featuredImage"), (req,res)=>{
+//   //const data = req.file;
+//   console.log(req.file.path);
+//   // console.log("File Name:",req.file.filename);
+//   //const filename = req.file.filename;
+//   uploadfile(req.file.filename);
+//   // res.send("File upload successfully...");
+// })
+
+//multiple file
+// app.post("/multerupload",upload.array("avatar",3), (req,res)=>{
+//   res.send('Hello world');
+// })
+
 
 //get access token for get record
 // 
@@ -249,9 +305,99 @@ app.post("/sendemail",(req,res)=>{
   });
 })
 
-app.put("/updatepassword",(req,res)=>{
+
+//upload file
+app.post("/uploadfile",upload.single("featuredImage"), (req,res)=>{
+  console.log(req.file);
+  const filename = req.file.filename;
+  let access_token_uploadfile;
+  axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_uploadfile}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
+  .then(function(response){
+    access_token_uploadfile = response.data.access_token;
+    console.log("Access token for upload file - ",access_token_uploadfile);
+  }).then(function(response){
+    axios.post(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Documents/3963856000000874007/Documents/upload`,{file:filename},{
+      headers: {
+        Authorization: `Zoho-oauthtoken ${access_token_uploadfile}`,
+      },
+    }).then(function(data){
+        console.log(data);
+        res.status(200).json(data);
+      }).catch(function(error){
+        console.log(error);
+        res.send("File upload failed");
+      })
+  }).catch(function(error){
+    console.log(error.message);
+  })
 
 })
+
+// app.post("/filesupload",(req,res)=>{
+//   const newpath = __dirname + "/files/";
+//   const featuredImage = req.files.featuredImage;
+//   console.log(featuredImage);
+//   const filename = featuredImage.name;
+ 
+//   featuredImage.mv(`${newpath}${filename}`, (err) => {
+//     if (err) {
+//       res.status(500).send({ message: "File upload failed", code: 200 });
+//     }
+//     //res.status(200).send({ message: "File Uploaded", code: 200 });
+//     //uploadfile(filename);
+//     let access_token_uploadfile;
+//   axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_uploadfile}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
+//   .then(function(response){
+//     access_token_uploadfile = response.data.access_token;
+//     console.log("Access token for upload file - ",access_token_uploadfile);
+//   }).then(function(response){
+//     axios.post(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Documents/3963856000000874007/Documents/upload`,{"file":filename},{
+//       headers: {
+//         Authorization: `Zoho-oauthtoken ${access_token_uploadfile}`,
+//       },
+//     })
+//       .then(function(response){
+//         console.log(response);
+//         res.status(200).json(response);
+//         //res.status(200).send({ message: "File Uploaded", code: 200 });
+//       }).catch(function(error){
+//         console.log(error);
+        
+//       })
+//   }).catch(function(error){
+//     console.log(error.message);
+//     res.status(404).json(error);
+//   })
+//   });
+// })
+
+// const uploadfile = (filename) => {
+//   console.log(filename);
+//   let access_token_uploadfile;
+//   axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_uploadfile}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
+//   .then(function(response){
+//     access_token_uploadfile = response.data.access_token;
+//     console.log("Access token for upload file - ",access_token_uploadfile);
+//   }).then(function(response){
+//     axios.post(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Documents/3963856000000874007/Documents/upload`,{file:filename},{
+//       headers: {
+//         Authorization: `Zoho-oauthtoken ${access_token_uploadfile}`,
+//       },
+//     })
+//       .then(function(response){
+//         console.log(response);
+//         // res.status(200).json(response);
+//         res.status(200).send({ message: "File Uploaded", code: 200 });
+//       }).catch(function(error){
+//         console.log(error);
+        
+//       })
+//   }).catch(function(error){
+//     console.log(error.message);
+//   })
+
+
+// }
 
 app.put("/reset-password",(req,res)=>{
   const {id,password} = req.body;
