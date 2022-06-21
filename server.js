@@ -203,6 +203,7 @@ app.post("/addrecord",(req,res)=>{
   // let requestBody = JSON.stringify({ data: [req.body] });
   // console.log(requestBody);
   let access_token_postdata;
+  let access_token_desktoken;
 axios
   .post(
     `https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_postdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`
@@ -230,6 +231,30 @@ axios
     .then(function(response){
         console.log(response);
         res.status(200).json(response.data);
+        axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_postdesktoken}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`).then(function(response){
+          access_token_desktoken = response.data.access_token;
+        }).then(function(response){
+          console.log("access token created desk token: ",access_token_desktoken);
+          axios.post(`https://desk.zoho.com/api/v1/tickets`,{
+            departmentId:"589572000000006907",
+            subject:"Hello w3scloud",
+            contact:{
+              firstName: firstname,
+              lastName:lastname,
+              email: email,
+              phone: "01622869685"
+            }
+          },{
+            headers:{
+              Authorization: `Zoho-oauthtoken ${access_token_desktoken}`
+            },
+          }).then(function(response){
+            console.log(response);
+            res.status(200).json(response.data);
+          }).catch(function(error){
+            res.json(error.message);
+          })
+        })
     })
     .catch(function(error){
         console.log(error);
