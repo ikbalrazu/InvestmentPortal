@@ -20,9 +20,9 @@ const port = process.env.PORT || 5000;
 
 var transporter = nodemailer.createTransport({
   service: 'gmail',
-  auth:{
-      user:"iqbalraju451@gmail.com",
-      pass:"pvrwwlqbhletegfv"
+  auth: {
+    user: "iqbalraju451@gmail.com",
+    pass: "pvrwwlqbhletegfv"
   }
 })
 
@@ -40,10 +40,10 @@ const UPLOADS_FOLDER = "./uploads/";
 
 //define the storage
 const storage = multer.diskStorage({
-  destination: (req,file,cb)=>{
+  destination: (req, file, cb) => {
     cb(null, "./uploads");
   },
-  filename: (req,file,cb) => {
+  filename: (req, file, cb) => {
     cb(null, Date.now() + '--' + file.originalname)
   },
 });
@@ -156,12 +156,12 @@ const upload = multer({
 //     access_token_updatedata = error;
 //   });
 
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
   res.send("Investment Portal");
 })
 
 //Get Record - Detail View
-app.get("/getrecord",(req,res)=>{
+app.get("/getrecord", (req, res) => {
 
   let access_token_getdata;
   axios
@@ -171,190 +171,274 @@ app.get("/getrecord",(req,res)=>{
     .then(function (response) {
       access_token_getdata = response.data.access_token;
     })
-    .then(function(data){
-        console.log("access token created for get Record: ",access_token_getdata);
-        axios.get(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Users`,{
+    .then(function (data) {
+      console.log("access token created for get Record: ", access_token_getdata);
+      axios.get(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Users`, {
         headers: {
-            Authorization: `Zoho-oauthtoken ${access_token_getdata}`
+          Authorization: `Zoho-oauthtoken ${access_token_getdata}`
         },
-    })
-    .then(function(response){
-        console.log(response);
-        res.status(200).json(response.data);
-    })
-    .catch(function(error){
-        console.log(error);
-    })
+      })
+        .then(function (response) {
+          console.log(response);
+          res.status(200).json(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
     })
     .catch(function (error) {
       access_token_getdata = error;
     });
 
-    
+
 })
 
- 
+
 
 
 
 //Add Records
-app.post("/addrecord",(req,res)=>{
-  const {firstname,lastname,email,password,date} = req.body;
+app.post("/addrecord", (req, res) => {
+  const { firstname, lastname, email, password, date } = req.body;
   // let requestBody = JSON.stringify({ data: [req.body] });
   // console.log(requestBody);
   let access_token_postdata;
-  let access_token_desktoken;
-axios
-  .post(
-    `https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_postdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`
-  )
-  .then(function (response) {
-    access_token_postdata = response.data.access_token;
-  })
-  .then(function(data){
-      console.log("access token created for post Record: ",access_token_postdata);
-      axios.post(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/form/User`,{
-    data:{
-      Date_Created: date,
-      Email: email,
-      Password: password,
-      Name:{
-        first_name: firstname,
-        last_name: lastname
-      }
-    }
-  },{
-        headers: {
-            Authorization: `Zoho-oauthtoken ${access_token_postdata}`
-        },
+
+  axios
+    .post(
+      `https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_postdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`
+    )
+    .then(function (response) {
+      access_token_postdata = response.data.access_token;
     })
-    .then(function(response){
-        console.log(response);
-        res.status(200).json(response.data);
-        axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_postdesktoken}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`).then(function(response){
-          access_token_desktoken = response.data.access_token;
-        }).then(function(response){
-          console.log("access token created desk token: ",access_token_desktoken);
-          axios.post(`https://desk.zoho.com/api/v1/tickets`,{
-            departmentId:"589572000000006907",
-            subject:"Hello w3scloud",
-            contact:{
-              firstName: firstname,
-              lastName:lastname,
-              email: email,
-              phone: "01622869685"
-            }
-          },{
-            headers:{
-              Authorization: `Zoho-oauthtoken ${access_token_desktoken}`
-            },
-          }).then(function(response){
-            console.log(response);
-            res.status(200).json(response.data);
-          }).catch(function(error){
-            res.json(error.message);
-          })
+    .then(function (data) {
+      console.log("access token created for post Record: ", access_token_postdata);
+      axios.post(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/form/User`, {
+        data: {
+          Date_Created: date,
+          Email: email,
+          Password: password,
+          UserStatus: "Rejected",
+          Name: {
+            first_name: firstname,
+            last_name: lastname
+          }
+        }
+      }, {
+        headers: {
+          Authorization: `Zoho-oauthtoken ${access_token_postdata}`
+        },
+      })
+        .then(function (response) {
+          console.log(response);
+          res.status(200).json(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+          res.json(error.message);
         })
     })
-    .catch(function(error){
-        console.log(error);
-        res.json(error.message);
-    })
-  })
-  .catch(function (error) {
-    access_token_postdata = error;
-  });
-  
+    .catch(function (error) {
+      access_token_postdata = error;
+    });
 
 })
 
+//create desk ticket
+app.post("/createdeskticket", (req, res) => {
+  const { firstname, lastname, email, userid } = req.body;
+  let access_token_desktoken;
+  axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_postdesktoken}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`).then(function (response) {
+    access_token_desktoken = response.data.access_token;
+  }).then(function (response) {
+    console.log("access token created desk token: ", access_token_desktoken);
+    axios.post(`https://desk.zoho.com/api/v1/tickets`, {
+      departmentId: "589572000000006907",
+      subject: "Hello w3scloud",
+      email: email,
+      accountId: userid,
+      contact: {
+        firstName: firstname,
+        lastName: lastname,
+        email: email,
+        phone: "01622869685"
+      }
+    }, {
+      headers: {
+        Authorization: `Zoho-oauthtoken ${access_token_desktoken}`
+      },
+    }).then(function (response) {
+      console.log(response);
+      res.status(200).json(response.data);
+    }).catch(function (error) {
+      res.json(error.message);
+    })
+  })
+})
+
+//get desk ticket by specific id
+app.post("/getticketbyid",(req,res)=>{
+  let access_token_desktoken;
+  axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdesktokenby_id}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`).then(function(data){
+    access_token_desktoken = response.data.access_token;
+  })
+})
+
 //get data by specific id
-app.post("/getrecordbyid",(req,res)=>{
-  const {id} = req.body;
+app.post("/getrecordbyid", (req, res) => {
+  const { id } = req.body;
   //GetRecordAccessToken(id);
 
   let access_token_getdata;
   axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
-  .then(function (response) {
-    access_token_getdata = response.data.access_token;
-  })
-  .then(function(data){
-      console.log("access token created for get Record: ",access_token_getdata);
-      axios.get(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Users/${id}`,{
+    .then(function (response) {
+      access_token_getdata = response.data.access_token;
+    })
+    .then(function (data) {
+      console.log("access token created for get Record: ", access_token_getdata);
+      axios.get(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Users/${id}`, {
         headers: {
-            Authorization: `Zoho-oauthtoken ${access_token_getdata}`
+          Authorization: `Zoho-oauthtoken ${access_token_getdata}`
         },
       })
-      .then(function(response){
-        console.log(response);
-        res.status(200).json(response.data);
-      })
-      .catch(function(error){
+        .then(function (response) {
+          console.log(response);
+          res.status(200).json(response.data);
+        })
+        .catch(function (error) {
           console.log(error);
-      })
-  })
-  .catch(function (error) {
-    access_token_getdata = error;
-  });
+        })
+    })
+    .catch(function (error) {
+      access_token_getdata = error;
+    });
 
 })
 
-app.post("/deleterecord",(req,res)=>{
+app.post("/deleterecord", (req, res) => {
 
 })
 
-app.post("/updaterecord",(req,res)=>{
+app.post("/updaterecord", (req, res) => {
 
 })
 
-app.post("/sendemail",(req,res)=>{
-  const {email,id} = req.body;
+app.post("/sendemail", (req, res) => {
+  const { email, id } = req.body;
   var mailOptions = {
-    from:' "Reset Your Password" <iqbalraju451@gmail.com>',
+    from: ' "Reset Your Password" <iqbalraju451@gmail.com>',
     to: email,
     subject: 'Reset Password Link - Investment Portal',
-    html:`<h2>Your email: ${email}! </h2><p>You requested for reset password, kindly use this <a href="https://investmentportal.netlify.app/confirmforgotpassword">Open Link</a> to reset your password</p>`
+    html: `<h2>Your email: ${email}! </h2><p>You requested for reset password, kindly use this <a href="https://investmentportal.netlify.app/confirmforgotpassword">Open Link</a> to reset your password</p>`
   }
 
-  transporter.sendMail(mailOptions, function(error, info){
-      if (error) {
-        console.log(error);
-        res.json(error.message);
-        console.log(email);
-      } else {
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+      res.json(error.message);
+      console.log(email);
+    } else {
 
-        res.json({message:"send email successfully"});
-        console.log('Email sent: ' + info.response);
-        
-      }
+      res.json({ message: "send email successfully" });
+      console.log('Email sent: ' + info.response);
+
+    }
   });
 })
 
 
+//get documents data by id
+app.post("/getdocuments",(req,res)=>{
+  const {id} = req.body;
+  let access_token_getdata;
+  axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
+    .then(function (response) {
+      access_token_getdata = response.data.access_token;
+    })
+    .then(function (data) {
+      console.log("access token created for get Record: ", access_token_getdata);
+      axios.get(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Documents/${id}`, {
+        headers: {
+          Authorization: `Zoho-oauthtoken ${access_token_getdata}`
+        },
+      })
+        .then(function (response) {
+          console.log(response);
+          res.status(200).json(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+    })
+    .catch(function (error) {
+      access_token_getdata = error;
+    });
+})
+
+//post documents
+app.post("/postdocuments",upload.single("featuredImage"),(req,res)=>{
+  console.log(req.file);
+  const filename = req.file.filename;
+  let access_token_postdata;
+
+  axios
+    .post(
+      `https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_postdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`
+    )
+    .then(function (response) {
+      access_token_postdata = response.data.access_token;
+    })
+    .then(function (data) {
+      console.log("access token created for post of documents: ", access_token_postdata);
+      axios.post(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/form/Documents`, {
+        data: {
+          DocumentName: "w3scloud",
+          Users_Id: "123456",
+        
+        }
+      }, {
+        headers: {
+          Authorization: `Zoho-oauthtoken ${access_token_postdata}`
+        },
+      })
+        .then(function (response) {
+          console.log(response);
+          res.status(200).json(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+          res.json(error.message);
+        })
+    })
+    .catch(function (error) {
+      access_token_postdata = error;
+    });
+})
+
 //upload file
-app.post("/uploadfile",upload.single("featuredImage"), (req,res)=>{
+app.post("/uploadfile", upload.single("featuredImage"), (req, res) => {
   console.log(req.file);
   const filename = req.file.filename;
   let access_token_uploadfile;
   axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_uploadfile}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
-  .then(function(response){
-    access_token_uploadfile = response.data.access_token;
-    console.log("Access token for upload file - ",access_token_uploadfile);
-  }).then(function(response){
-    axios.post(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Documents/3963856000000874007/Documents/upload`,{file:filename},{
-      headers: {
-        Authorization: `Zoho-oauthtoken ${access_token_uploadfile}`,
-      },
-    }).then(function(data){
+    .then(function (response) {
+      access_token_uploadfile = response.data.access_token;
+      console.log("Access token for upload file - ", access_token_uploadfile);
+    }).then(function (response) {
+      axios.post(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Documents/3963856000000882003/Documents/upload`, { file: filename }, {
+        headers: {
+          Authorization: `Zoho-oauthtoken ${access_token_uploadfile}`,
+        },
+      }).then(function (data) {
         console.log(data);
         res.status(200).json(data);
-      }).catch(function(error){
+      }).catch(function (error) {
         console.log(error);
         res.send("File upload failed");
       })
-  }).catch(function(error){
-    console.log(error.message);
-  })
+    }).catch(function (error) {
+      console.log(error.message);
+    })
 
 })
 
@@ -363,7 +447,7 @@ app.post("/uploadfile",upload.single("featuredImage"), (req,res)=>{
 //   const featuredImage = req.files.featuredImage;
 //   console.log(featuredImage);
 //   const filename = featuredImage.name;
- 
+
 //   featuredImage.mv(`${newpath}${filename}`, (err) => {
 //     if (err) {
 //       res.status(500).send({ message: "File upload failed", code: 200 });
@@ -387,7 +471,7 @@ app.post("/uploadfile",upload.single("featuredImage"), (req,res)=>{
 //         //res.status(200).send({ message: "File Uploaded", code: 200 });
 //       }).catch(function(error){
 //         console.log(error);
-        
+
 //       })
 //   }).catch(function(error){
 //     console.log(error.message);
@@ -415,7 +499,7 @@ app.post("/uploadfile",upload.single("featuredImage"), (req,res)=>{
 //         res.status(200).send({ message: "File Uploaded", code: 200 });
 //       }).catch(function(error){
 //         console.log(error);
-        
+
 //       })
 //   }).catch(function(error){
 //     console.log(error.message);
@@ -424,8 +508,8 @@ app.post("/uploadfile",upload.single("featuredImage"), (req,res)=>{
 
 // }
 
-app.put("/reset-password",(req,res)=>{
-  const {id,password} = req.body;
+app.put("/reset-password", (req, res) => {
+  const { id, password } = req.body;
   let access_token_updatedata;
   axios
     .post(
@@ -434,37 +518,37 @@ app.put("/reset-password",(req,res)=>{
     .then(function (response) {
       access_token_updatedata = response.data.access_token;
     })
-    .then(function(data){
-        console.log("access token created for update Record: ",access_token_updatedata);
-        axios.put(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Users/${id}`,{
-        data:{
+    .then(function (data) {
+      console.log("access token created for update Record: ", access_token_updatedata);
+      axios.put(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Users/${id}`, {
+        data: {
           Password: password
         }
-        },{
-            headers: {
-                Authorization: `Zoho-oauthtoken ${access_token_updatedata}`
-            },
-        })
-        .then(function(response){
-            console.log(response);
-            res.status(200).json(response.data);
-        })
-        .catch(function(error){
-            console.log(error);
-            res.json(error.message);
-        })
+      }, {
+        headers: {
+          Authorization: `Zoho-oauthtoken ${access_token_updatedata}`
+        },
       })
-      .catch(function (error) {
-        access_token_updatedata = error;
-      });
-  
+        .then(function (response) {
+          console.log(response);
+          res.status(200).json(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+          res.json(error.message);
+        })
+    })
+    .catch(function (error) {
+      access_token_updatedata = error;
+    });
+
 
 })
 
-app.listen(port,function(error){
-    if(error){
-        console.log("server failed");
-    }else{
-        console.log("server success");
-    }
+app.listen(port, function (error) {
+  if (error) {
+    console.log("server failed");
+  } else {
+    console.log("server success");
+  }
 })
