@@ -218,7 +218,7 @@ app.post("/addrecord", (req, res) => {
           Date_Created: date,
           Email: email,
           Password: password,
-          UserStatus: "Rejected",
+          UserStatus: "Pending",
           Name: {
             first_name: firstname,
             last_name: lastname
