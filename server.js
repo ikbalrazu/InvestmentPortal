@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const multer = require('multer');
 const fileupload = require("express-fileupload");
+const FormData = require('form-data');
+const fs = require('fs');
 
 dotenv.config();
 const app = express();
@@ -419,15 +421,22 @@ app.post("/postdocuments",upload.single("featuredImage"),(req,res)=>{
 app.post("/uploadfile", upload.single("featuredImage"), (req, res) => {
   console.log(req.file);
   const filename = req.file.filename;
+  const filepath = req.file.path;
   let access_token_uploadfile;
+  const formData = new FormData();
+  formData.append(filename, fs.createReadStream(filepath));
+  const formHeaders = formData.getHeaders();
   axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_uploadfile}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
     .then(function (response) {
+      console.log("Form data: ",formData);
       access_token_uploadfile = response.data.access_token;
       console.log("Access token for upload file - ", access_token_uploadfile);
     }).then(function (response) {
-      axios.post(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Documents/3963856000000882003/Documents/upload`, { file: filename }, {
+      axios.post(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Documents/3963856000000882003/Documents/upload`, formData , {
         headers: {
           Authorization: `Zoho-oauthtoken ${access_token_uploadfile}`,
+          formHeaders,
+          environment: "development",
         },
       }).then(function (data) {
         console.log(data);
