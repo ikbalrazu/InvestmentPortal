@@ -436,7 +436,6 @@ app.post("/uploadfile", upload.single("featuredImage"), (req, res) => {
         headers: {
           Authorization: `Zoho-oauthtoken ${access_token_uploadfile}`,
           formHeaders,
-          environment: "development",
         },
       }).then(function (data) {
         console.log(data);
@@ -519,6 +518,7 @@ app.post("/uploadfile", upload.single("featuredImage"), (req, res) => {
 
 app.put("/reset-password", (req, res) => {
   const { id, password } = req.body;
+  console.log("Password: ",password);
   let access_token_updatedata;
   axios
     .post(
