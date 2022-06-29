@@ -48,6 +48,7 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     cb(null, Date.now() + '--' + file.originalname)
   },
+  
 });
 
 const upload = multer({
@@ -378,11 +379,10 @@ app.post("/getdocuments",(req,res)=>{
 })
 
 //post documents
-app.post("/postdocuments",upload.single("featuredImage"),(req,res)=>{
-  console.log(req.file);
-  const filename = req.file.filename;
-  let access_token_postdata;
+app.post("/postdocuments",(req,res)=>{
+  
 
+  let access_token_postdata;
   axios
     .post(
       `https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_postdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`
@@ -406,6 +406,7 @@ app.post("/postdocuments",upload.single("featuredImage"),(req,res)=>{
         .then(function (response) {
           console.log(response);
           res.status(200).json(response.data);
+          console.log(response.data);
         })
         .catch(function (error) {
           console.log(error);
@@ -418,30 +419,34 @@ app.post("/postdocuments",upload.single("featuredImage"),(req,res)=>{
 })
 
 //upload file
-app.post("/uploadfile", upload.single("featuredImage"), (req, res) => {
-  console.log(req.file);
+app.post("/uploadfile", upload.single("featuredImage"), (req, res, next) => {
+  const {file,body:{id}} = req;
+  console.log(file);
   const filename = req.file.filename;
-  const filepath = req.file.path;
+  const filepath = file.path;
+  // const userid = req.file.userid;
+  console.log("document id: ",id);
   let access_token_uploadfile;
   const formData = new FormData();
-  formData.append(filename, fs.createReadStream(filepath));
+  formData.append('file', fs.createReadStream(filepath));
   const formHeaders = formData.getHeaders();
   axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_uploadfile}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
     .then(function (response) {
-      console.log("Form data: ",formData);
+      //console.log("Form data: ",formData);
       access_token_uploadfile = response.data.access_token;
       console.log("Access token for upload file - ", access_token_uploadfile);
     }).then(function (response) {
-      axios.post(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Documents/3963856000000882003/Documents/upload`, formData , {
+      axios.post(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Documents/${id}/Documents/upload`, formData , {
         headers: {
           Authorization: `Zoho-oauthtoken ${access_token_uploadfile}`,
-          formHeaders,
+          ...formHeaders,
         },
       }).then(function (data) {
-        console.log(data);
-        res.status(200).json(data);
+        // console.log(data);
+        // res.status(200).json(data);
+        res.send("File Uploaded Successfully");
       }).catch(function (error) {
-        console.log(error);
+        console.log(error.message);
         res.send("File upload failed");
       })
     }).catch(function (error) {
