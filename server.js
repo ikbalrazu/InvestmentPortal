@@ -293,13 +293,13 @@ app.post("/getrecordbyid", (req, res) => {
   //GetRecordAccessToken(id);
 
   let access_token_getdata;
-  axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
+  axios.post(`https://accounts.zoho.com.au/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
     .then(function (response) {
       access_token_getdata = response.data.access_token;
     })
     .then(function (data) {
       console.log("access token created for get Record: ", access_token_getdata);
-      axios.get(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Users/${id}`, {
+      axios.get(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Users/${id}`, {
         headers: {
           Authorization: `Zoho-oauthtoken ${access_token_getdata}`
         },
@@ -354,13 +354,13 @@ app.post("/sendemail", (req, res) => {
 app.post("/getdocuments",(req,res)=>{
   const {id} = req.body;
   let access_token_getdata;
-  axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
+  axios.post(`https://accounts.zoho.com.au/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
     .then(function (response) {
       access_token_getdata = response.data.access_token;
     })
     .then(function (data) {
       console.log("access token created for get Record: ", access_token_getdata);
-      axios.get(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Documents/${id}`, {
+      axios.get(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Documents/${id}`, {
         headers: {
           Authorization: `Zoho-oauthtoken ${access_token_getdata}`
         },
