@@ -349,6 +349,30 @@ app.post("/sendemail", (req, res) => {
   });
 })
 
+app.post("/sendOTPVerificationEmail",(req,res)=>{
+  const {email,otpPin} = req.body;
+  console.log("OTP: ",otpPin);
+  var mailOptions = {
+    from: ' "Verify Account" <iqbalraju451@gmail.com>',
+    to: email,
+    subject: 'Two Factor Authentication - Investment Portal',
+    html: `<p>Your email: ${email}! </p><p>Your PIN</p><h1>${otpPin}</h1>`
+  }
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+      res.json(error.message);
+      console.log(email);
+    } else {
+
+      res.json({ message: "send email successfully" });
+      //console.log('Email sent: ' + info.response);
+
+    }
+  });
+})
+
 
 //get documents data by id
 app.post("/getdocuments",(req,res)=>{
@@ -612,6 +636,8 @@ app.put("/reset-password", (req, res) => {
 
 
 })
+
+
 
 app.listen(port, function (error) {
   if (error) {
