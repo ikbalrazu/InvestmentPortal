@@ -8,6 +8,7 @@ const multer = require('multer');
 const fileupload = require("express-fileupload");
 const FormData = require('form-data');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
 
 dotenv.config();
 const app = express();
@@ -326,26 +327,40 @@ app.post("/updaterecord", (req, res) => {
 
 })
 
-app.post("/sendemail", (req, res) => {
-  const { email, id } = req.body;
+app.post("/sendForgotPasswordMail", (req, res) => {
+  const { email,id} = req.body;
+  const jwtToken = jwt.sign({ userId: id }, process.env.JWT_SECRET, {
+    expiresIn: "5m",
+  });
+  console.log(jwtToken);
   var mailOptions = {
     from: ' "Reset Your Password" <iqbalraju451@gmail.com>',
     to: email,
     subject: 'Reset Password Link - Investment Portal',
-    html: `<h2>Your email: ${email}! </h2><p>You requested for reset password, kindly use this <a href="https://investmentportal.netlify.app/confirmforgotpassword">Open Link</a> to reset your password</p>`
+    html: `<p>Your email: ${email}! </p> <p>Your user id: ${id}! </p><p>You requested for reset password, kindly use this <a href="http://localhost:3000/resetpassword/${jwtToken}">Link</a> to reset your password</p>`
   }
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
       res.json(error.message);
-      console.log(email);
+      //console.log(email);
     } else {
 
       res.json({ message: "send email successfully" });
-      console.log('Email sent: ' + info.response);
+      //console.log('Email sent: ' + info.response);
 
     }
+  });
+})
+
+app.post("/verifyForgotMail",(req,res)=>{
+  const {token} = req.body;
+  jwt.verify(token, process.env.JWT_SECRET, function(err,token){
+    if(err){
+      res.json({result:"Link expired"});
+    }
+    res.json({result:"Valid Link"});
   });
 })
 
