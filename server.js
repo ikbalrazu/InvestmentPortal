@@ -22,11 +22,19 @@ app.use(bodyParser.json());
 
 const port = process.env.PORT || 5000;
 
+// var transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//     user: "amalinvestorportal@gmail.com",
+//     pass: "xanivfgvoaupzlyv"
+//   }
+// })
+
 var transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: "amalinvestorportal@gmail.com",
-    pass: "xanivfgvoaupzlyv"
+    user: "iqbalraju451@gmail.com",
+    pass: "pvrwwlqbhletegfv"
   }
 })
 
@@ -335,6 +343,7 @@ app.post("/sendForgotPasswordMail", (req, res) => {
   });
   console.log(jwtToken);
   console.log(id)
+  console.log(email);
   var mailOptions = {
     from: ' "Reset Your Password" <amalinvestorportal@gmail.com>',
     to: email,
@@ -350,7 +359,7 @@ app.post("/sendForgotPasswordMail", (req, res) => {
     } else {
 
       res.json({ message: "send email successfully" });
-      //console.log('Email sent: ' + info.response);
+      console.log('Email sent: ' + info.response);
 
     }
   });
