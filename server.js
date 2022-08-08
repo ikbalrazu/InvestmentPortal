@@ -17,15 +17,16 @@ app.use(cors());
 // app.use(fileupload());
 app.use(bodyParser.json());
 
-
+//user: "iqbalraju451@gmail.com",
+//pass: "pvrwwlqbhletegfv"
 
 const port = process.env.PORT || 5000;
 
 var transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: "iqbalraju451@gmail.com",
-    pass: "pvrwwlqbhletegfv"
+    user: "amalinvestorportal@gmail.com",
+    pass: "xanivfgvoaupzlyv"
   }
 })
 
