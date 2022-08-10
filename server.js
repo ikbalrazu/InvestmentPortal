@@ -22,21 +22,21 @@ app.use(bodyParser.json());
 
 const port = process.env.PORT || 5000;
 
-// var transporter = nodemailer.createTransport({
-//   service: 'gmail',
-//   auth: {
-//     user: "amalinvestorportal@gmail.com",
-//     pass: "xanivfgvoaupzlyv"
-//   }
-// })
-
 var transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: "iqbalraju451@gmail.com",
-    pass: "pvrwwlqbhletegfv"
+    user: "amalinvestorportal@gmail.com",
+    pass: "xanivfgvoaupzlyv"
   }
 })
+
+// var transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//     user: "iqbalraju451@gmail.com",
+//     pass: "pvrwwlqbhletegfv"
+//   }
+// })
 
 
 //image path
