@@ -261,21 +261,51 @@ app.post("/addrecord", (req, res) => {
 
 })
 
-app.post("/setuserpassword",(req,res)=>{
-  const {id, email} = req.body;
+// app.post("/setuserpassword",(req,res)=>{
+//   const {id, email} = req.body;
+//   const jwtToken = jwt.sign({ userId: id }, process.env.JWT_SECRET, {
+//     expiresIn: "24h",
+//   });
+//   console.log(jwtToken);
+//   console.log(id)
+//   console.log(email);
+//   var mailOptions = {
+//     from: ' "Set Your Password" <amalinvestorportal@gmail.com>',
+//     to: email,
+//     subject: 'Set Password Link - Investment Portal',
+//     html: `<p>Your email: ${email}! </p> <p>Your user id: ${id}! </p><p>You requested for reset password, kindly use this <a href="https://investmentportal.netlify.app/setuserpassword/${id}/${jwtToken}">Link</a> to reset your password</p>`
+//   }
+
+//   transporter.sendMail(mailOptions, function (error, info) {
+//     if (error) {
+//       console.log(error);
+//       res.json(error.message);
+//       //console.log(email);
+//     } else {
+
+//       res.json({ message: "send email successfully" });
+//       console.log('Email sent: ' + info.response);
+
+//     }
+//   });
+// })
+
+//Get Data from URL in NodeJS
+app.get("/setuserpassword",function(req,res){
+  var id = req.query.id;
+  var email = req.query.email;
   const jwtToken = jwt.sign({ userId: id }, process.env.JWT_SECRET, {
-    expiresIn: "24h",
+    expiresIn: "5m",
   });
   console.log(jwtToken);
   console.log(id)
   console.log(email);
   var mailOptions = {
-    from: ' "Set Your Password" <amalinvestorportal@gmail.com>',
+    from: ' "Reset Your Password" <amalinvestorportal@gmail.com>',
     to: email,
-    subject: 'Set Password Link - Investment Portal',
-    html: `<p>Your email: ${email}! </p> <p>Your user id: ${id}! </p><p>You requested for reset password, kindly use this <a href="https://investmentportal.netlify.app/setuserpassword/${id}/${jwtToken}">Link</a> to reset your password</p>`
+    subject: 'Reset Password Link - Investment Portal',
+    html: `<p>Your email: ${email}! </p> <p>Your user id: ${id}! </p><p>You requested for reset password, kindly use this <a href="https://investmentportal.netlify.app/resetpassword/${id}/${jwtToken}">Link</a> to reset your password</p>`
   }
-
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
