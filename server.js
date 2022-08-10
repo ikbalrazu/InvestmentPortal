@@ -212,9 +212,10 @@ app.get("/getrecord", (req, res) => {
 
 //Add Records
 app.post("/addrecord", (req, res) => {
-  const { firstname, lastname, email, password, date } = req.body;
+  const { firstname, lastname, email, phone, company, dealsaccess, companyrole, jobrole } = req.body;
   // let requestBody = JSON.stringify({ data: [req.body] });
   // console.log(requestBody);
+  console.log(firstname, lastname, email, phone, company, dealsaccess, companyrole, jobrole);
   let access_token_postdata;
 
   axios
@@ -228,14 +229,17 @@ app.post("/addrecord", (req, res) => {
       console.log("access token created for post Record: ", access_token_postdata);
       axios.post(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/form/User`, {
         data: {
-          Date_Created: date,
           Email: email,
-          Password: password,
           UserStatus: "Pending",
           Name: {
             first_name: firstname,
             last_name: lastname
-          }
+          },
+          Phone_Number: phone,
+          Company: company,
+          Deals_need_access_to: dealsaccess,
+          Company_Role: companyrole,
+          Role: jobrole
         }
       }, {
         headers: {
@@ -255,6 +259,35 @@ app.post("/addrecord", (req, res) => {
       access_token_postdata = error;
     });
 
+})
+
+app.post("/setuserpassword",(req,res)=>{
+  const {id, email} = req.body;
+  const jwtToken = jwt.sign({ userId: id }, process.env.JWT_SECRET, {
+    expiresIn: "24h",
+  });
+  console.log(jwtToken);
+  console.log(id)
+  console.log(email);
+  var mailOptions = {
+    from: ' "Set Your Password" <amalinvestorportal@gmail.com>',
+    to: email,
+    subject: 'Set Password Link - Investment Portal',
+    html: `<p>Your email: ${email}! </p> <p>Your user id: ${id}! </p><p>You requested for reset password, kindly use this <a href="https://investmentportal.netlify.app/setuserpassword/${id}/${jwtToken}">Link</a> to reset your password</p>`
+  }
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+      res.json(error.message);
+      //console.log(email);
+    } else {
+
+      res.json({ message: "send email successfully" });
+      console.log('Email sent: ' + info.response);
+
+    }
+  });
 })
 
 //create desk ticket
