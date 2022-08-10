@@ -22,21 +22,21 @@ app.use(bodyParser.json());
 
 const port = process.env.PORT || 5000;
 
-// var transporter = nodemailer.createTransport({
-//   service: 'gmail',
-//   auth: {
-//     user: "amalinvestorportal@gmail.com",
-//     pass: "xanivfgvoaupzlyv"
-//   }
-// })
-
 var transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: "iqbalraju451@gmail.com",
-    pass: "pvrwwlqbhletegfv"
+    user: "amalinvestorportal@gmail.com",
+    pass: "mnixqgtazsqeiftl"
   }
 })
+
+// var transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//     user: "iqbalraju451@gmail.com",
+//     pass: "pvrwwlqbhletegfv"
+//   }
+// })
 
 
 //image path
@@ -383,6 +383,8 @@ app.post("/sendForgotPasswordMail", (req, res) => {
     subject: 'Reset Password Link - Investment Portal',
     html: `<p>Your email: ${email}! </p> <p>Your user id: ${id}! </p><p>You requested for reset password, kindly use this <a href="https://investmentportal.netlify.app/resetpassword/${id}/${jwtToken}">Link</a> to reset your password</p>`
   }
+
+  //<a href="https://investmentportal.netlify.app/resetpassword/${id}/${jwtToken}">Link</a>
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
