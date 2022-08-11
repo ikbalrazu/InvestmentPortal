@@ -304,7 +304,7 @@ app.get("/setuserpassword",function(req,res){
     from: ' "Set Your Password" <amalinvestorportal@gmail.com>',
     to: email,
     subject: 'Set Password Link - Investment Portal',
-    html: `<p>Your email: ${email}! </p> <p>Your user id: ${id}! </p><p>You requested for Set password, kindly use this <a href="http://localhost:3000/setuserpassword/${id}/${jwtToken}">Link</a> to set your password</p>`
+    html: `<p>Your email: ${email}! </p> <p>Your user id: ${id}! </p><p>You requested for Set password, kindly use this <a href="https://investmentportal.netlify.app/setuserpassword/${id}/${jwtToken}">Link</a> to set your password</p>`
   }
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
