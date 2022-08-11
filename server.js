@@ -301,10 +301,10 @@ app.get("/setuserpassword",function(req,res){
   console.log(id)
   console.log(email);
   var mailOptions = {
-    from: ' "Reset Your Password" <amalinvestorportal@gmail.com>',
+    from: ' "Set Your Password" <amalinvestorportal@gmail.com>',
     to: email,
-    subject: 'Reset Password Link - Investment Portal',
-    html: `<p>Your email: ${email}! </p> <p>Your user id: ${id}! </p><p>You requested for reset password, kindly use this <a href="http://localhost:3000/setuserpassword/${id}/${jwtToken}">Link</a> to reset your password</p>`
+    subject: 'Set Password Link - Investment Portal',
+    html: `<p>Your email: ${email}! </p> <p>Your user id: ${id}! </p><p>You requested for Set password, kindly use this <a href="http://localhost:3000/setuserpassword/${id}/${jwtToken}">Link</a> to set your password</p>`
   }
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
@@ -429,6 +429,7 @@ app.post("/sendForgotPasswordMail", (req, res) => {
     }
   });
 })
+
 
 app.post("/verifyForgotMail",(req,res)=>{
   const {token} = req.body;
