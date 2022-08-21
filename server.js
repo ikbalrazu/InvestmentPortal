@@ -100,83 +100,6 @@ const upload = multer({
 // })
 
 
-//get access token for get record
-// 
-// axios
-//   .post(
-//     `https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`
-//   )
-//   .then(function (response) {
-//     access_token_getdata = response.data.access_token;
-//   })
-//   .then(function(data){
-//       console.log("access token created for get Record: ",access_token_getdata);
-//   })
-//   .catch(function (error) {
-//     access_token_getdata = error;
-//   });
-
-
-// const GetRecordAccessToken = (id,res) =>{
-//   let access_token_getdata;
-//   axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
-//   .then(function (response) {
-//     access_token_getdata = response.data.access_token;
-//   })
-//   .then(function(data){
-//       console.log("access token created for get Record: ",access_token_getdata);
-//       axios.get(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Users/${id}`,{
-//         headers: {
-//             Authorization: `Zoho-oauthtoken ${access_token_getdata}`
-//         },
-//       })
-//       .then(function(response){
-//         console.log(response);
-//         res.status(200).json(response.data);
-//       })
-//       .catch(function(error){
-//           console.log(error);
-//       })
-//   })
-//   .catch(function (error) {
-//     access_token_getdata = error;
-//   });
-// }
-
-
-//get access token for create Record
-// let access_token_postdata;
-// axios
-//   .post(
-//     `https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_postdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`
-//   )
-//   .then(function (response) {
-//     access_token_postdata = response.data.access_token;
-//   })
-//   .then(function(data){
-//       console.log("access token created for post Record: ",access_token_postdata);
-//   })
-//   .catch(function (error) {
-//     access_token_postdata = error;
-//   });
-
-
-//get access token for create Record
-// let access_token_updatedata;
-// axios
-//   .post(
-//     `https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_updatedata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`
-//   )
-//   .then(function (response) {
-//     access_token_updatedata = response.data.access_token;
-//   })
-//   .then(function(data){
-//       console.log("access token created for update Record: ",access_token_updatedata);
-//   })
-//   .catch(function (error) {
-//     access_token_updatedata = error;
-//   });
-
 app.get("/", (req, res) => {
   res.send("Investment Portal");
 })
@@ -400,8 +323,6 @@ app.post("/getticketbyid",(req,res)=>{
 //get data by specific id
 app.post("/getrecordbyid", async(req, res) => {
   const { id } = req.body;
-  //const id = "9824000000163059";
-  //GetRecordAccessToken(id);
 
   let access_token;
 
@@ -624,69 +545,60 @@ app.post("/getalldocuments",(req,res)=>{
 //get all deals data
 app.post("/getdealsbyid",(req,res)=>{
   const {dealid} = req.body;
-  let access_token_getdata;
-  axios.post(`https://accounts.zoho.com.au/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
-    .then(function (response) {
-      access_token_getdata = response.data.access_token;
-    })
-    .then(function (data) {
-      console.log("access token created for get Record: ", access_token_getdata);
-      axios.get(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Deals/${dealid}`, {
-        headers: {
-          Authorization: `Zoho-oauthtoken ${access_token_getdata}`
-        },
+  // let access_token_getdata;
+  // axios.post(`https://accounts.zoho.com.au/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
+  //   .then(function (response) {
+  //     access_token_getdata = response.data.access_token;
+  //   })
+  //   .then(function (data) {
+  //     console.log("access token created for get Record: ", access_token_getdata);
+  //     axios.get(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Deals/${dealid}`, {
+  //       headers: {
+  //         Authorization: `Zoho-oauthtoken ${access_token_getdata}`
+  //       },
+  //     })
+  //       .then(function (response) {
+  //         console.log(response);
+  //         res.status(200).json(response.data);
+  //       })
+  //       .catch(function (error) {
+  //         console.log(error);
+  //       })
+  //   })
+  //   .catch(function (error) {
+  //     access_token_getdata = error;
+  //   });
+
+  let access_token;
+
+  if(myCache.has("accesstoken")){
+    console.log("from cache");
+     access_token = myCache.get("accesstoken");
+   }else{
+    await axios.post(`https://accounts.zoho.com.au/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
+      .then(function (response) {
+        access_token_getdata = response.data.access_token;
+        console.log("without cache");
+        myCache.set("accesstoken", access_token_getdata);
+        access_token= myCache.get("accesstoken");;
       })
-        .then(function (response) {
-          console.log(response);
-          res.status(200).json(response.data);
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
+   }
+
+
+   await axios.get(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Deals/${dealid}`, {
+      headers: {
+        Authorization: `Zoho-oauthtoken ${access_token}`
+      },
+    })
+    .then(function (response) {
+    console.log(response);
+    res.status(200).json(response.data);
     })
     .catch(function (error) {
-      access_token_getdata = error;
-    });
-})
-
-app.post("/accesstokendealsbyid",(req,res)=>{
-  axios.post(`https://accounts.zoho.com.au/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
-    .then(function (response) {
-      access_token_getdata = response.data.access_token;
-      res.send(access_token_getdata);
+    console.log(error);
     })
+
 })
-
-//get deals by id
-// app.get("/getalldealsbyid",(req,res)=>{
-//   const {dealid} = req.body;
-//   let access_token_getdata;
-//   //return GetToken();
-//   axios.post(`https://accounts.zoho.com.au/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
-//     .then(function (response) {
-//       access_token_getdata = response.data.access_token;
-//     })
-//     .then(function (data) {
-//       console.log("access token created for get Record: ", access_token_getdata);
-//       axios.get(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Deals/${dealid}`, {
-//         headers: {
-//           Authorization: `Zoho-oauthtoken ${access_token_getdata}`
-//         },
-//       })
-//         .then(function (response) {
-//           console.log(response);
-//           res.status(200).json(response.data);
-//         })
-//         .catch(function (error) {
-//           console.log(error);
-//         })
-//     })
-//     .catch(function (error) {
-//       access_token_getdata = error;
-//     });
-
-// })
-
 
 //allglobaldocuments
 app.get("/allglobaldocuments",async(req,res)=>{
