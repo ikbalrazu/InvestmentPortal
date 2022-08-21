@@ -16,12 +16,12 @@ const myCache = new NodeCache({stdTTL:3000});
 dotenv.config();
 const app = express();
 app.use(express.json());
-const corsOptions ={
-  origin:'http://localhost:3000', 
-  credentials:true,            //access-control-allow-credentials:true
-  optionSuccessStatus:200
-}
-app.use(cors(corsOptions));
+// const corsOptions ={
+//   origin:'http://localhost:3000', 
+//   credentials:true,            //access-control-allow-credentials:true
+//   optionSuccessStatus:200
+// }
+app.use(cors());
 // app.use(fileupload());
 app.use(bodyParser.json());
 
@@ -182,7 +182,7 @@ app.get("/", (req, res) => {
 })
 
 //Get Record - Detail View
-app.get("/getrecord", (req, res) => {
+app.get("/getrecord", async(req, res) => {
 
   // let access_token_getdata;
   // axios
