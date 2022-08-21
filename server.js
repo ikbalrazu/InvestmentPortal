@@ -543,7 +543,7 @@ app.post("/getalldocuments",(req,res)=>{
 })
 
 //get all deals data
-app.post("/getdealsbyid",(req,res)=>{
+app.post("/getdealsbyid",async(req,res)=>{
   const {dealid} = req.body;
   // let access_token_getdata;
   // axios.post(`https://accounts.zoho.com.au/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
