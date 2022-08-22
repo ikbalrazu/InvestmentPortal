@@ -457,33 +457,44 @@ app.post("/sendOTPVerificationEmail",(req,res)=>{
 
 
 //get documents data by id
+// app.post("/getdocumentsbyid",async(req,res)=>{
+//   const {id} = req.body;
+//   console.log(id);
+//   let access_token;
+
+//   if(myCache.has("accesstoken")){
+//     console.log("from cache");
+//      access_token = myCache.get("accesstoken");
+//    }else{
+//     await axios.post(`https://accounts.zoho.com.au/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
+//       .then(function (response) {
+//         access_token_getdata = response.data.access_token;
+//         console.log("without cache");
+//         myCache.set("accesstoken", access_token_getdata);
+//         access_token= myCache.get("accesstoken");;
+//       })
+//    }
+
+
+//    await axios.get(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Documents/${id}`, {
+//       headers: {
+//         Authorization: `Zoho-oauthtoken ${access_token}`
+//       },
+//     })
+//     .then(function (response) {
+//     console.log(response);
+//     res.status(200).json(response.data);
+//     })
+//     .catch(function (error) {
+//     console.log(error);
+//     })
+    
+// })
+
+//documents by deals id
 app.post("/getdocumentsbyid",async(req,res)=>{
   const {id} = req.body;
   console.log(id);
-  // let access_token_getdata;
-  // axios.post(`https://accounts.zoho.com.au/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
-  //   .then(function (response) {
-  //     access_token_getdata = response.data.access_token;
-  //   })
-  //   .then(function (data) {
-  //     console.log("access token created for get Record: ", access_token_getdata);
-  //     axios.get(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Documents/${id}`, {
-  //       headers: {
-  //         Authorization: `Zoho-oauthtoken ${access_token_getdata}`
-  //       },
-  //     })
-  //       .then(function (response) {
-  //         console.log(response);
-  //         res.status(200).json(response.data);
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       })
-  //   })
-  //   .catch(function (error) {
-  //     access_token_getdata = error;
-  //   });
-  
   let access_token;
 
   if(myCache.has("accesstoken")){
@@ -500,7 +511,7 @@ app.post("/getdocumentsbyid",async(req,res)=>{
    }
 
 
-   await axios.get(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Documents/${id}`, {
+   await axios.get(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Documents?criteria=Deals.ID=${id}`, {
       headers: {
         Authorization: `Zoho-oauthtoken ${access_token}`
       },
@@ -514,6 +525,7 @@ app.post("/getdocumentsbyid",async(req,res)=>{
     })
     
 })
+
 
 //get all documents
 app.post("/getalldocuments",(req,res)=>{
@@ -545,30 +557,6 @@ app.post("/getalldocuments",(req,res)=>{
 //get all deals data
 app.post("/getdealsbyid",async(req,res)=>{
   const {dealid} = req.body;
-  // let access_token_getdata;
-  // axios.post(`https://accounts.zoho.com.au/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
-  //   .then(function (response) {
-  //     access_token_getdata = response.data.access_token;
-  //   })
-  //   .then(function (data) {
-  //     console.log("access token created for get Record: ", access_token_getdata);
-  //     axios.get(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Deals/${dealid}`, {
-  //       headers: {
-  //         Authorization: `Zoho-oauthtoken ${access_token_getdata}`
-  //       },
-  //     })
-  //       .then(function (response) {
-  //         console.log(response);
-  //         res.status(200).json(response.data);
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       })
-  //   })
-  //   .catch(function (error) {
-  //     access_token_getdata = error;
-  //   });
-
   let access_token;
 
   if(myCache.has("accesstoken")){
