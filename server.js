@@ -22,11 +22,9 @@ app.use(express.json());
 //   optionSuccessStatus:200
 // }
 app.use(cors());
-// app.use(fileupload());
+
 app.use(bodyParser.json());
 
-//user: "iqbalraju451@gmail.com",
-//pass: "pvrwwlqbhletegfv"
 
 const port = process.env.PORT || 5000;
 
@@ -38,22 +36,8 @@ var transporter = nodemailer.createTransport({
   }
 })
 
-// var transporter = nodemailer.createTransport({
-//   service: 'gmail',
-//   auth: {
-//     user: "iqbalraju451@gmail.com",
-//     pass: "pvrwwlqbhletegfv"
-//   }
-// })
 
 
-//image path
-//limit: 5mb or 1mb
-//filter: png, jpeg, jpg
-
-// const storage = multer.diskStorage({
-//   dest: UPLOADS_FOLDER
-// })
 
 //file upload folder
 const UPLOADS_FOLDER = "./uploads/";
@@ -73,31 +57,7 @@ const upload = multer({
   storage: storage
 })
 
-//preapre the final multer upload object
-// const upload = multer({
-//   dest: UPLOADS_FOLDER,
-//   limits: {
-//     fileSize: 1000000, //1mb
-//   },
-//   fileFilter: (req,file,cb) => {
-//     console.log(file);
-//   },
-// });
 
-//single file
-// app.post("/multerupload",upload.single("featuredImage"), (req,res)=>{
-//   //const data = req.file;
-//   console.log(req.file.path);
-//   // console.log("File Name:",req.file.filename);
-//   //const filename = req.file.filename;
-//   uploadfile(req.file.filename);
-//   // res.send("File upload successfully...");
-// })
-
-//multiple file
-// app.post("/multerupload",upload.array("avatar",3), (req,res)=>{
-//   res.send('Hello world');
-// })
 
 
 app.get("/", (req, res) => {
@@ -106,33 +66,6 @@ app.get("/", (req, res) => {
 
 //Get Record - Detail View
 app.get("/getrecord", async(req, res) => {
-
-  // let access_token_getdata;
-  // axios
-  //   .post(
-  //     `https://accounts.zoho.com.au/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`
-  //   )
-  //   .then(function (response) {
-  //     access_token_getdata = response.data.access_token;
-  //   })
-  //   .then(function (data) {
-  //     console.log("access token created for get Record: ", access_token_getdata);
-  //     axios.get(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Users`, {
-  //       headers: {
-  //         Authorization: `Zoho-oauthtoken ${access_token_getdata}`
-  //       },
-  //     })
-  //       .then(function (response) {
-  //         console.log(response);
-  //         res.status(200).json(response.data);
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       })
-  //   })
-  //   .catch(function (error) {
-  //     access_token_getdata = error;
-  //   });
 
   let access_token;
 
@@ -173,8 +106,6 @@ app.get("/getrecord", async(req, res) => {
 //Add Records
 app.post("/addrecord", (req, res) => {
   const { firstname, lastname, email, phone, company, dealsaccess, companyrole, jobrole } = req.body;
-  // let requestBody = JSON.stringify({ data: [req.body] });
-  // console.log(requestBody);
   console.log(firstname, lastname, email, phone, company, dealsaccess, companyrole, jobrole);
   let access_token_postdata;
 
@@ -221,34 +152,6 @@ app.post("/addrecord", (req, res) => {
 
 })
 
-// app.post("/setuserpassword",(req,res)=>{
-//   const {id, email} = req.body;
-//   const jwtToken = jwt.sign({ userId: id }, process.env.JWT_SECRET, {
-//     expiresIn: "24h",
-//   });
-//   console.log(jwtToken);
-//   console.log(id)
-//   console.log(email);
-//   var mailOptions = {
-//     from: ' "Set Your Password" <amalinvestorportal@gmail.com>',
-//     to: email,
-//     subject: 'Set Password Link - Investment Portal',
-//     html: `<p>Your email: ${email}! </p> <p>Your user id: ${id}! </p><p>You requested for reset password, kindly use this <a href="https://investmentportal.netlify.app/setuserpassword/${id}/${jwtToken}">Link</a> to reset your password</p>`
-//   }
-
-//   transporter.sendMail(mailOptions, function (error, info) {
-//     if (error) {
-//       console.log(error);
-//       res.json(error.message);
-//       //console.log(email);
-//     } else {
-
-//       res.json({ message: "send email successfully" });
-//       console.log('Email sent: ' + info.response);
-
-//     }
-//   });
-// })
 
 //Get Data from URL in NodeJS
 app.get("/setuserpassword",function(req,res){
@@ -353,29 +256,7 @@ app.post("/getrecordbyid", async(req, res) => {
     console.log(error);
     })
 
-  // let access_token_getdata;
-  // axios.post(`https://accounts.zoho.com.au/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_getdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
-  //   .then(function (response) {
-  //     access_token_getdata = response.data.access_token;
-  //   })
-  //   .then(function (data) {
-  //     console.log("access token created for get Record: ", access_token_getdata);
-  //     axios.get(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Users/${id}`, {
-  //       headers: {
-  //         Authorization: `Zoho-oauthtoken ${access_token_getdata}`
-  //       },
-  //     })
-  //       .then(function (response) {
-  //         console.log(response);
-  //         res.status(200).json(response.data);
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       })
-  //   })
-  //   .catch(function (error) {
-  //     access_token_getdata = error;
-  //   });
+  
 
 })
 
@@ -760,71 +641,7 @@ app.post("/uploadfile", upload.single("featuredImage"), (req, res, next) => {
 
 })
 
-// app.post("/filesupload",(req,res)=>{
-//   const newpath = __dirname + "/files/";
-//   const featuredImage = req.files.featuredImage;
-//   console.log(featuredImage);
-//   const filename = featuredImage.name;
 
-//   featuredImage.mv(`${newpath}${filename}`, (err) => {
-//     if (err) {
-//       res.status(500).send({ message: "File upload failed", code: 200 });
-//     }
-//     //res.status(200).send({ message: "File Uploaded", code: 200 });
-//     //uploadfile(filename);
-//     let access_token_uploadfile;
-//   axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_uploadfile}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
-//   .then(function(response){
-//     access_token_uploadfile = response.data.access_token;
-//     console.log("Access token for upload file - ",access_token_uploadfile);
-//   }).then(function(response){
-//     axios.post(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Documents/3963856000000874007/Documents/upload`,{"file":filename},{
-//       headers: {
-//         Authorization: `Zoho-oauthtoken ${access_token_uploadfile}`,
-//       },
-//     })
-//       .then(function(response){
-//         console.log(response);
-//         res.status(200).json(response);
-//         //res.status(200).send({ message: "File Uploaded", code: 200 });
-//       }).catch(function(error){
-//         console.log(error);
-
-//       })
-//   }).catch(function(error){
-//     console.log(error.message);
-//     res.status(404).json(error);
-//   })
-//   });
-// })
-
-// const uploadfile = (filename) => {
-//   console.log(filename);
-//   let access_token_uploadfile;
-//   axios.post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_uploadfile}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`)
-//   .then(function(response){
-//     access_token_uploadfile = response.data.access_token;
-//     console.log("Access token for upload file - ",access_token_uploadfile);
-//   }).then(function(response){
-//     axios.post(`https://creator.zoho.com/api/v2/zoho_user12867/investment-portal/report/All_Documents/3963856000000874007/Documents/upload`,{file:filename},{
-//       headers: {
-//         Authorization: `Zoho-oauthtoken ${access_token_uploadfile}`,
-//       },
-//     })
-//       .then(function(response){
-//         console.log(response);
-//         // res.status(200).json(response);
-//         res.status(200).send({ message: "File Uploaded", code: 200 });
-//       }).catch(function(error){
-//         console.log(error);
-
-//       })
-//   }).catch(function(error){
-//     console.log(error.message);
-//   })
-
-
-// }
 
 app.put("/reset-password", (req, res) => {
   const { id, password } = req.body;
@@ -897,6 +714,7 @@ const StoreToken = async() => {
   // return accesstoken.data;
 }
 
+//-----------***---------------
 
 app.get("/downloaddocument",async(req,res)=>{
   
@@ -933,7 +751,7 @@ app.get("/downloaddocument",async(req,res)=>{
 })
 
 
-//-----------***---------------
+
 
 app.post("/dealswithuserid",async(req,res)=>{
   const {dealid} = req.body;
