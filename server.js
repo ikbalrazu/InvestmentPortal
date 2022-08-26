@@ -386,7 +386,7 @@ app.get("/w3s/v1/alldocdownload", async (req, res) => {
         file.close();
         res
           .status(200)
-          .json("http://localhost:5000/download?filename=" + filename);
+          .json("https://investmentportal.herokuapp.com/download?filename=" + filename);
       });
     }
   );
