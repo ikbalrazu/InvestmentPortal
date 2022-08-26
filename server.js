@@ -452,6 +452,25 @@ app.get("/w3s/v1/getalldeals", async (req, res) => {
     });
 });
 
+app.post("/w3s/v1/documentswithdealsid",async(req,res)=>{
+  const {dealid} = req.body;
+  console.log(dealid);
+  const access_token = await AccessToken();
+   await axios.get(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Documents?criteria=Deals.ID=${dealid}`, {
+      headers: {
+        Authorization: `Zoho-oauthtoken ${access_token}`
+      },
+    })
+    .then(function (response) {
+    console.log(response);
+    res.status(200).json(response.data);
+    })
+    .catch(function (error) {
+    //console.log(error);
+    })
+
+})
+
 app.get("/w3s/v1/memorycache", async (req, res) => {
   const access_token = await AccessToken();
 
