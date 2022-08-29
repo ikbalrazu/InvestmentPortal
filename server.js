@@ -283,6 +283,7 @@ app.post("/w3s/v1/verifyForgotMail", (req, res) => {
 
 app.post("/w3s/v1/sendOTPVerificationEmail", (req, res) => {
   const { email, otpPin } = req.body;
+  console.log("email:",email);
   console.log("OTP: ", otpPin);
   var mailOptions = {
     from: ' "Verify Account" <amalinvestorportal@gmail.com>',
@@ -293,7 +294,7 @@ app.post("/w3s/v1/sendOTPVerificationEmail", (req, res) => {
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      console.log(error);
+      //console.log(error);
       res.json(error.message);
       console.log(email);
     } else {
@@ -465,7 +466,7 @@ app.post("/w3s/v1/documentswithdealsid",async(req,res)=>{
   const {dealid} = req.body;
   console.log(dealid);
   const access_token = await AccessToken();
-   await axios.get(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Documents?criteria=Deals.ID=${dealid}`, {
+   await axios.get(`https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Documents?criteria=(Access_Type="Private")  %26%26 (Deals.ID=${dealid})`, {
       headers: {
         Authorization: `Zoho-oauthtoken ${access_token}`
       },
@@ -587,6 +588,50 @@ app.post("/w3s/v1/dealswithuserid", async (req, res) => {
       console.log(error);
     });
 });
+
+app.put("/w3s/v1/checkboxhandler",async(req,res)=>{
+  const {id,checked} = req.body;
+  console.log("user id: ",id);
+  let access_token_updatedata;
+  axios
+    .post(
+      `https://accounts.zoho.com.au/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_updatedata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`
+    )
+    .then(function (response) {
+      access_token_updatedata = response.data.access_token;
+    })
+    .then(function (data) {
+      console.log(
+        "access token created for update Record: ",
+        access_token_updatedata
+      );
+      axios
+        .put(
+          `https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/report/All_Users/${id}`,
+          {
+            data: {
+              Email_When_Document_Uploaded: checked,
+            },
+          },
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token_updatedata}`,
+            },
+          }
+        )
+        .then(function (response) {
+          console.log(response);
+          res.status(200).json(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+          res.json(error.message);
+        });
+    })
+    .catch(function (error) {
+      access_token_updatedata = error;
+    });
+})
 
 //upload file
 app.post(
