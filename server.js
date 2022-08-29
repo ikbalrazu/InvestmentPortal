@@ -95,7 +95,16 @@ app.post("/w3s/v1/addrecord", async (req, res) => {
     jobrole,
   } = req.body;
 
-  const access_token = await AccessToken();
+  let access_token_postdata;
+
+  await axios
+    .post(
+      `https://accounts.zoho.com.au/oauth/v2/token?refresh_token=${process.env.REFRESH_TOKEN_postdata}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`
+    )
+    .then(function (response) {
+      access_token_postdata = response.data.access_token;
+    })
+
   await axios
     .post(
       `https://creator.zoho.com.au/api/v2/nickprocterau_amaltrustees2/investment-portal/form/User`,
@@ -116,7 +125,7 @@ app.post("/w3s/v1/addrecord", async (req, res) => {
       },
       {
         headers: {
-          Authorization: `Zoho-oauthtoken ${access_token}`,
+          Authorization: `Zoho-oauthtoken ${access_token_postdata}`,
         },
       }
     )
